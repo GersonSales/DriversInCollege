@@ -1,0 +1,67 @@
+import pygame
+from pygame import *
+
+class Menu_ranking:
+
+    def Imprime_tela(self, surface):
+        self.surface = surface
+        Fonte = pygame.font.Font("Font/AbyssinicaSIL-R.ttf", 20)
+        Rank = open("Ranking/testes.txt", "r")
+        Rank = Rank.readlines()
+        surface.blit(pygame.image.load("Imagens/Menu.png"), (0, 0)) 
+        surface.blit(pygame.image.load("Imagens/Transparencia_menu.png"), (0, 0)) 
+        surface.blit(pygame.image.load("Imagens/Nome_ranking.png"), (300, 150))   
+        Cord_x = 200
+        Cord_y = 250        
+        for colocado in range(len(Rank)):
+            if colocado % 2 == 0:
+                Rank_print = Fonte.render("%d - %s" %(colocado, Rank[colocado]), 1, (80, 80, 80))
+                Cord_y += 30
+            else:
+
+                Rank_print = Fonte.render(Rank[colocado], 1, (80, 80, 80))
+                Cord_x += 200
+            surface.blit(Rank_print, (Cord_x, Cord_y))
+            Cord_x = 200
+
+
+
+    def Insere_recorde(self, Nome, Pontuacao):
+        Ranking = open("Ranking.txt", "r")
+        Linhas_ranking = Ranking.readlines()
+        for pontos in range(1, 11, 2):
+            try:
+                if Pontuacao > int(Linhas_ranking[pontos]):
+                    if len(Linhas_ranking) < 10:
+                        Linhas_ranking.insert(pontos - 1, Nome + "\n" + str(Pontuacao) + "\n")
+                        Ranking = open("Ranking.txt", "w")
+                        Ranking.writelines(Linhas_ranking)
+                        Ranking.close()
+                        break
+                    else:
+                        Linhas_ranking.insert(pontos - 1, Nome + "\n" + str(Pontuacao) + "\n")
+                        Linhas_ranking.pop(-1)
+                        Linhas_ranking.pop(-1)
+                        Ranking = open("Ranking.txt", "w")
+                        Ranking.writelines(Linhas_ranking)
+                        Ranking.close()
+                        break
+                elif pontos == 9 and len(Linhas_ranking) < 10:
+                    Linhas_ranking.append(Nome + "\n" + str(Pontuacao) + "\n") 
+                    Ranking = open("Ranking.txt", "w")
+                    Ranking.writelines(Linhas_ranking)
+                    Ranking.close()
+                    break
+            except:
+                Linhas_ranking.append(Nome + "\n" + str(Pontuacao) + "\n") 
+                Ranking = open("Ranking.txt", "w")
+                Ranking.writelines(Linhas_ranking)
+                Ranking.close()
+                break
+    
+
+        
+        
+            
+            
+            

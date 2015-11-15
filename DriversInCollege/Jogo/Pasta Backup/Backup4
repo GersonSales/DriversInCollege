@@ -1,0 +1,584 @@
+import pygame
+from pygame.locals import *
+import math, sys, time, random
+
+
+Numero_fase = 1  
+
+diretorio_imagens = "Jogo/Cenario/"
+class Cenario:
+
+    def __init__(self):
+        
+        self.Lista_carros = [pygame.image.load(diretorio_imagens + "Carros/carro_objeto_" + str(x) + ".png") for x in range(17)]
+        random.shuffle(self.Lista_carros)
+        self.Fases = {
+        "Fase_1": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Fases/Fase_1.png"),
+        "Imagem_barreira": [pygame.image.load(diretorio_imagens + "Fases/Borda_fase1.png")],
+        "Posicao_barreira": [(0, 0, 0)],
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (800, 600),
+        "Virtual_x": 567,
+        "Virtual_y": 456,
+        "Angulo_inicial": 270,
+        "Velocidade_inicial": 65,
+        "Posicao_vaga": (67, 180, 0),
+        "Posicao_carros": [(64, 80, 3), (71, 270, 5), (78, 464, 0), (339, 426, 6),  (545, 122, 3)] },
+
+
+        "Fase_2": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Fases/Fase_2.png"),
+        "Imagem_barreira": [pygame.image.load(diretorio_imagens + "Fases/Barreira_fase2.png"),
+                            pygame.image.load(diretorio_imagens + "Fases/Borda_fase2.png")],
+        "Posicao_barreira": [(0, 330, 0), (0, 0, 0)],
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (800, 600),
+        "Virtual_x": -300,
+        "Virtual_y": 640,
+        "Angulo_inicial": 90,
+        "Velocidade_inicial": 55,
+        "Posicao_vaga": (445, 45, 90),
+        "Posicao_carros": [(57, 33, -95), (153, 41, 82), (257, 32, -90), (335, 30, 98),  (540, 40, 90), (650, 28, -87)] },
+
+        "Fase_3": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Fases/Fase_3.png"),
+        "Imagem_barreira": [pygame.image.load(diretorio_imagens + "Fases/Barreira_fase3.png"),
+                            pygame.image.load(diretorio_imagens + "Fases/Borda_fase3.png")],
+        "Posicao_barreira": [(0, 130, 0), (0, 0, 0)],
+        "Ambientacao": [pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png"),
+                        pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png")],
+        "Posicao_ambientacao": [(0, 50, 0), (330, 20, -45)],
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (800, 600),
+        "Virtual_x": -300,
+        "Virtual_y": 200,
+        "Angulo_inicial": 90,
+        "Velocidade_inicial": 55,
+        "Posicao_vaga": (373, 237, 90),
+        "Posicao_carros": [(44, 227, 95), (157, 233, 82), (274, 239, 90)] },
+
+        "Fase_4": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Fases/Fase_4.png"),
+        "Imagem_barreira": [pygame.image.load(diretorio_imagens + "Fases/Barreira_fase4.png"),
+                            pygame.image.load(diretorio_imagens + "Fases/Borda_fase4.png")],
+        "Posicao_barreira": [(420, -20, 0), (0, 0, 0)],
+        "Ambientacao": [pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png"),
+                        pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png"),
+                        pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png"),
+                        pygame.image.load(diretorio_imagens + "Ambientacao/Arvore_1.png")],
+
+        "Posicao_ambientacao": [(350, 130, 0), (350, 350, 0),(850, -100, -45), (850, 200, -45)],
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (1600, 600),
+        "Virtual_x": 1300,
+        "Virtual_y": 500,
+        "Angulo_inicial": -90,
+        "Velocidade_inicial": 35,
+        "Posicao_vaga": (60, 463, 0),
+        "Posicao_carros": [(1140, 50, 0), (1140, 150, 0), (1140, 250, 0), (1140, 350, 0), (790, 50, 0), (790, 150, 0),                                               (790, 250, 0), (790, 350, 0), (75, 50, 0), (75, 150, 0), (75, 250, 0), (75, 350, 0)] },
+
+
+        "Fase_5": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Fases/Fase_5.png"),
+        "Imagem_barreira": [pygame.image.load(diretorio_imagens + "Fases/Borda_fase5.png")],
+        "Posicao_barreira": [(0, 0, 0)],
+        "Ambientacao": [],
+        "Posicao_ambientacao": [],
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (1600, 600),
+        "Virtual_x": 580,
+        "Virtual_y": 770,
+        "Angulo_inicial": 0,
+        "Velocidade_inicial": 50,
+        "Posicao_vaga": (735, 75, 0),
+        "Posicao_carros": [(90, 75, 0), (90, 165, 0), (90, 265, 0), (90, 355, 0), (90, 445, 0), (400, 345, -90),                                               (500, 345, -90), (600, 345, -90), (545, 75, 0), (925, 75, 0), (1130, 75, 0)] },
+
+
+        "Fase_6": 
+        {"Imagem_fase": pygame.image.load(diretorio_imagens + "Interacao/Game_over.png"),
+        "Tamanho_tela": (800, 600),
+        "Tamanho_mapa": (500, 600),
+        "Virtual_x": 5800,
+        "Virtual_y": 7700,
+        "Angulo_inicial": 0,
+        "Velocidade_inicial": 50,
+        "Posicao_vaga": (7305, 75, 0),
+        "Posicao_carros": []} 
+
+
+
+        }
+        
+
+
+
+
+
+
+cenario = Cenario()
+Tamanho_tela_x = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][0]
+Tamanho_tela_y = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][1]
+contador_backup = 0
+DIREITA = 0
+ESQUERDA = 1
+
+
+def clamp(x, minimo, maximo):
+    return max(minimo, min(maximo, x))
+ 
+class Camera:
+    global Numero_fase
+
+    def __init__(self, min_x, min_y, max_x, max_y):
+        self.min_x, self.min_y = min_x, min_y
+        self.max_x, self.max_y = max_x, max_y
+        self.x = min_x
+        self.y = min_y
+
+    def center_on(self, x, y):
+        new_x = x - Tamanho_tela_x / 2
+        new_y = y - Tamanho_tela_y / 2
+        self.x = clamp(new_x, self.min_x, self.max_x)
+        self.y = clamp(new_y, self.min_y, self.max_y)
+
+
+class Carro:
+    global Numero_fase
+    def __init__(self):
+        
+        self.virtual_x = cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_x"]
+        self.virtual_y = cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_y"]
+        self.angle = cenario.Fases["Fase_" + str(Numero_fase)]["Angulo_inicial"]
+        self.velocidade = cenario.Fases["Fase_" + str(Numero_fase)]["Velocidade_inicial"]
+        self.image = pygame.image.load(diretorio_imagens + 'Carros/car.png')
+        self.rect = self.image.get_rect()
+        self.original = self.image
+        self.x, self.y = Tamanho_tela_x/2, Tamanho_tela_y/2
+        self.backup_x, self.backup_y = 567, 456
+        self.offset_x, self.offset_y = self.virtual_x - Tamanho_tela_x/2, self.virtual_y - Tamanho_tela_y/2
+        self.Dano_carro = 0
+        self.colidir = True 
+        self.colidir_parede = False
+        self.registra_tempo = (int(time.time()) % 60) - 2
+        self.Vaga_imagem = pygame.image.load(diretorio_imagens + "Carros/Vaga.png")
+        self.Dano = pygame.image.load(diretorio_imagens + "Botoes/Dano.png")
+        self.Dano_fase = 0
+        self.Barra_dano = pygame.image.load(diretorio_imagens + "Botoes/Barra_dano.png")
+        self.Preenchimento_barra = pygame.image.load(diretorio_imagens + "Botoes/Preenchimento_barra.png")
+        self.movimenta = True
+        self.tempo_x = time.time()
+        self.Pontuacao_inicial = 1000
+        self.Lista_pontuacao = []
+        self.Total_tempo = 0
+        self.Total_dano = 0
+        self.Total_pontos = 0
+
+
+
+    def Mudar_direcao(self, direcao):
+        if direcao == DIREITA:
+                self.angle += (self.velocidade/9) * 0.5 
+        elif direcao == ESQUERDA:
+                self.angle -= (self.velocidade/9) * 0.5
+        if self.angle >= 360:
+            self.angle = self.angle - 360
+        if self.angle < 0:
+            self.angle = 360 + self.angle
+
+
+    #FUNCAO EM CONSTRUCAO: PILOTO AUTOMATICO(BETA)----------
+    def Piloto_automatico(self, key):
+        if self.rect[0] > 400:
+            key[273] = 1
+        if self.rect[0] < 400 and self.rect[1] > 200:
+            key[273] = 1
+            key[275] = 1
+        if self.rect[0] < 320 and self.rect[1] < 180:
+            key[275] = 0
+            key[273] = 1
+            key[276] = 1 
+        if self.rect[0] < 170 and self.rect[1] < 150:
+            key[276] = 0
+            key[275] = 1 
+            key[273] = 1
+
+    def Movimentacao(self,key):
+
+        #ACIONA O PILOTO AUTOMATICO(BETA)----------
+        if key[K_v]:
+            self.Piloto_automatico(key)
+
+        
+
+        #Variavel para informar quado devera ser feito um backup da posicao 
+        global contador_backup
+
+        #Variaveis responsaveis pela angulacao do carro
+        self.velocidadex = math.sin(self.angle * (math.pi/180)) * (self.velocidade/9)
+        self.velocidadey = math.cos(self.angle * (math.pi/180)) * (self.velocidade/9) * -1
+
+        #Verificar qual tecla esta sendo pressionada e move o carro na direcao correta
+        if key[K_UP] and self.movimenta:
+            if self.velocidade < 60:
+                self.velocidade += 2 
+        if key[K_DOWN] and self.movimenta:
+            if self.velocidade > -50:
+                self.velocidade -= 2
+
+
+        if  self.velocidade < 0:
+            self.virtual_x += self.velocidadex
+            self.virtual_y += self.velocidadey
+            if self.velocidadex != 0.0 or self.velocidadey != 0.0:
+                self.colidir = True
+                contador_backup += 1
+            if key[K_RIGHT]:
+                self.Mudar_direcao(DIREITA)
+            elif key[K_LEFT]:
+                self.Mudar_direcao(ESQUERDA)
+            if key[K_DOWN] == False:
+                self.velocidade += 1
+            if key[K_UP]:
+                self.velocidade += 2
+      
+        elif  self.velocidade > 0:
+            self.virtual_x += self.velocidadex
+            self.virtual_y += self.velocidadey
+            if self.velocidadex != 0.0 or self.velocidadey != 0.0:
+                self.colidir = True
+                contador_backup += 1
+            if key[K_RIGHT]:
+                self.Mudar_direcao(DIREITA)
+            elif key[K_LEFT]:
+                self.Mudar_direcao(ESQUERDA)
+            if key[K_UP] == False:
+                self.velocidade -= 1
+            if key[K_DOWN]:
+                self.velocidade -= 2
+        else:
+            self.colidir_parede = True
+
+
+
+        #Reseta posicao do carro
+        if key[K_SPACE]:
+            self.virtual_x, self.virtual_y = 420, 456
+            self.velocidade = 0
+
+        #Girar a imagem do carro na angulacao correta e obter um retangulo da imagem do carro principal
+        self.image =  pygame.transform.rotozoom(self.original, self.angle * -1 , 1.).convert()
+        self.image.set_colorkey((0, 0, 0))
+        self.rect = self.image.get_rect(center = (self.virtual_x, self.virtual_y))
+
+        #Faz um "backup" das variaveis de movimento pra quando o carro bater voltar pra tais posicoes
+        if contador_backup == 8:
+            self.backup_x = self.virtual_x
+            self.backup_y = self.virtual_y
+            contador_backup = 0   
+
+    def Colidir_carro(self):
+        #Voltar o carro alguma posicoes para dar um efeito de batida e incrementar na variavel Dano
+        global contador_backup, Numero_fase
+        
+        self.virtual_x, self.virtual_y = self.backup_x, self.backup_y
+        self.registra_tempo = int(time.time()) % 60
+        self.Dano_carro += abs(self.velocidade) * 3 
+        self.Dano_fase += abs(self.velocidade) * 3
+        self.velocidade = 0
+        if self.Dano_carro >= 900:
+            Numero_fase = 6
+            print "perdeu"
+            self.Dano_carro = 0
+       
+
+    def draw(self, screen, camera, loop = True):
+    
+        if loop:
+            self.tempo_y = time.time()
+            self.tempo = self.tempo_y - self.tempo_x
+            print self.tempo
+            branco, preto = (255, 255, 255), (0, 0, 0)
+    
+            #Desenha a imagem da vaga na tela
+            Vaga_x = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_vaga"][0]
+            Vaga_y = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_vaga"][1]
+            Vaga_angulo = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_vaga"][2]
+            
+            Vaga = screen.blit(pygame.transform.rotate(self.Vaga_imagem, Vaga_angulo),                                                          (-camera.x + Vaga_x, -camera.y + Vaga_y))
+
+            self.Vaga = Rect(Vaga[0] - 5, Vaga[1] - 10, Vaga[2] + 5, Vaga[3] + 20)
+    
+
+
+            #Desenha a imagem do carro na tela
+            self.rect = screen.blit(self.image, self.rect.move(-camera.x + 255 , -camera.y - 126))
+            #print self.rect, "carro"
+            #Dicionario com as coordenadas do local dos carros da fase 
+            Dic_fases = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_carros"]
+            
+            Lista_carros = [] 
+            #Carrega imagens dos carros e define os retangulo do mesmos
+            x = 0
+            for img in range(len(Dic_fases)):
+
+                Carro_angulo = Dic_fases[x][2]
+                Lista_carros.append(pygame.transform.rotozoom(cenario.Lista_carros[x], Carro_angulo, 1.).convert())
+                x += 1
+
+            Lista_colorkey = [imagem.set_colorkey(preto) for imagem in Lista_carros]
+            Lista_rect_carros = [retangulo.get_rect() for retangulo in Lista_carros]
+            Lista_mask_carros = [pygame.mask.from_surface(carro) for carro in Lista_carros]        
+    
+            #Armazena os pontos principais dos carros
+    
+            for Coord in range(len(Dic_fases)):
+
+                if Coord >= len(Lista_carros):
+                    Coord -= (Coord / 2)
+                pos_1 = Dic_fases[Coord][0]
+                pos_2 = Dic_fases[Coord][1]
+                self.image_mask = pygame.mask.from_surface(self.image)
+                self.rect.topleft = (self.rect[0], self.rect[1])
+    
+                Lista_rect_carros[Coord] = screen.blit(Lista_carros[Coord], (-camera.x + pos_1, -camera.y + pos_2))
+                Lista_rect_carros[Coord].topleft = (-camera.x + pos_1, -camera.y + pos_2)
+                carros_mask = Lista_mask_carros[Coord]
+
+                ofset_x, ofset_y = (Lista_rect_carros[Coord].left - self.rect.left),                                                            (Lista_rect_carros[Coord].top - self.rect.top)
+
+                if (self.image_mask.overlap(Lista_mask_carros[Coord],(ofset_x, ofset_y)) != None) and self.colidir:
+                    self.Colidir_carro()   
+                    self.colidir = False
+   
+
+            #Verifica se a fase contem barreiras, caso exista: blita e cria colisao
+            try:
+                #Dicionario com as coordenadas do local dos carros da fase 
+                Dic_barreira = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_barreira"]
+    
+                #Carrega imagens dos carros e define os retangulo do mesmos
+                Lista_barreira = []
+                x = 0
+                for img in range(len(Dic_barreira)):
+    
+                    Barreira_angulo = Dic_barreira[x][2]
+                    Lista_barreira.append(cenario.Fases["Fase_" + str(Numero_fase)]["Imagem_barreira"][x].convert())
+                    x += 1
+                Lista_colorkey = [imagem.set_colorkey(preto) for imagem in Lista_barreira]
+                Lista_rect_barreira = [retangulo.get_rect() for retangulo in Lista_barreira]
+                Lista_mask_barreira = [pygame.mask.from_surface(barmask) for barmask in Lista_barreira]  
+    
+    
+                for Coord in range(len(Dic_barreira)):
+    
+                    if Coord >= len(Lista_barreira):
+                        Coord -= (Coord / 2)
+                    pos_1 = Dic_barreira[Coord][0]
+                    pos_2 = Dic_barreira[Coord][1]
+                    self.image_mask = pygame.mask.from_surface(self.image)
+                    self.rect.topleft = (self.rect[0], self.rect[1])
+        
+                    Lista_rect_barreira[Coord] = screen.blit(Lista_barreira[Coord], (-camera.x + pos_1, -camera.y + pos_2))
+                    Lista_rect_barreira[Coord].topleft = (-camera.x + pos_1, -camera.y + pos_2)
+                    Barreira_mask = Lista_mask_barreira[Coord]
+    
+                    ofset_x, ofset_y = (Lista_rect_barreira[Coord].left - self.rect.left),                                                            (Lista_rect_barreira[Coord].top - self.rect.top)
+                    if (self.image_mask.overlap(Lista_mask_barreira[Coord], (ofset_x, ofset_y)) != None) and self.colidir:
+                        self.Colidir_carro()   
+                        self.colidir = False
+     
+            except: pass
+            
+            #Verifica se na fase existe ambientacao, caso exista: blita imagen
+            try:
+                Arvores = cenario.Fases["Fase_" + str(Numero_fase)]["Ambientacao"]
+                Pos_arvores = cenario.Fases["Fase_" + str(Numero_fase)]["Posicao_ambientacao"]
+                for arv in range(len(Arvores)):
+                 
+                    screen.blit(pygame.transform.rotozoom(Arvores[arv], Pos_arvores[arv][2], 1.),                                                                      (-camera.x + Pos_arvores[arv][0], -camera.y + Pos_arvores[arv][1]))
+            except: pass
+                
+
+
+            #Quando o carro estiver sobre a vaga: passa de fase
+            if self.Vaga.contains(self.rect) or Numero_fase == 6:
+                self.velocidade = 0
+                self.velocidadex = 0
+                self.velocidadey = 0
+                loop = self.Finalizar_nivel(screen, camera)
+            #Reinicia o carro depois do efeito de colisao
+            if (int(time.time()) % 60) - 1 == self.registra_tempo:
+                #self.velocidade = self.cenario.Fases["Fase_" + str(Numero_fase)]["Velocidade_inicial"]
+                #self.virtual_x = self.cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_x"]
+                #self.virtual_y = self.cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_y"]
+                #self.angle = self.cenario.Fases["Fase_" + str(Numero_fase)]["Angulo_inicial"] 
+                pass
+            return not(loop), loop
+
+
+    def Botoes_jogo(self, screen, camera):
+        screen.blit(self.Dano.convert_alpha(), (545  , 542))
+        screen.blit(self.Barra_dano, (600, 550))
+        self.Lista_preenchimendo = [not(bool(x)) for x in range(1, 31)]
+        x = 605
+        for barra in range(1, 31):
+            if barra <= self.Dano_carro/30:
+                screen.blit(self.Preenchimento_barra, (x, 550))
+                x += 5
+
+    def Finalizar_nivel(self, screen, camera):
+        global Numero_fase
+        if self.movimenta:
+            self.Pontuacao_fase = self.Pontuacao_inicial - (int(self.tempo * 10)  + self.Dano_fase)
+            if self.Pontuacao_fase > 0:
+                self.Lista_pontuacao.append((self.tempo, self.Dano_fase, self.Pontuacao_fase))
+            else:
+                self.Lista_pontuacao.append((self.tempo, self.Dano_fase, 0))
+            self.Total_tempo += self.tempo
+            self.Total_dano += self.Dano_fase
+            self.Total_pontos += self.Pontuacao_fase
+            self.Dano_fase = 0
+
+        self.tempo_x = self.tempo_y
+
+
+        self.movimenta = False
+        Proximo = [(470, 400, 163, 30), pygame.image.load(diretorio_imagens + "Interacao/Proximo_MOFF.png"),                                                                      pygame.image.load(diretorio_imagens + "Interacao/Proximo_MON.png")]
+        Fonte = pygame.font.Font(diretorio_imagens + "Font/AbyssinicaSIL-R.ttf", 40)
+
+        Transparencia = screen.blit(pygame.image.load(diretorio_imagens + "Interacao/Transparencia_menu.png"),(0, 0))
+
+        if Numero_fase <= 5:
+            Transparencia 
+            Nivel_finalizado = Fonte.render("Nivel Finalizado", 1, (115, 115, 115))
+    
+            i = len(self.Lista_pontuacao) - 1
+
+            Print_nometempo = Fonte.render("Tempo: ", 1, (115, 115, 115))
+            Print_nomedano = Fonte.render("Dano: ", 1, (115, 115, 115))
+            Print_nomepontuacao = Fonte.render("Pontuacao: ", 1, (115, 115, 115))
+
+            Print_tempo = Fonte.render("%.2f" %(self.Lista_pontuacao[i][0]), 1, (115, 115, 115))
+            Print_dano = Fonte.render(str(self.Lista_pontuacao[i][1]), 1, (115, 115, 115))
+            Print_pontuacao = Fonte.render(str(self.Lista_pontuacao[i][2]), 1, (115, 115, 115))
+        
+            screen.blit(Nivel_finalizado, (230, 170))    
+                
+            screen.blit(Print_tempo, (350, 250))
+            screen.blit(Print_dano, (310, 300))
+            screen.blit(Print_pontuacao, (410, 350))
+
+            screen.blit(Print_nometempo, (200, 250))
+            screen.blit(Print_nomedano, (200, 300))
+            screen.blit(Print_nomepontuacao, (200, 350))
+
+        
+            if Rect(Proximo[0]).collidepoint(pygame.mouse.get_pos()):
+                
+                screen.blit(Proximo[2], (Proximo[0][0], Proximo[0][1]))
+                if pygame.mouse.get_pressed()[0]:
+                    
+                    Numero_fase += 1
+                    
+                    self.virtual_x = cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_x"]
+                    self.virtual_y = cenario.Fases["Fase_" + str(Numero_fase)]["Virtual_y"]
+                    self.angle = cenario.Fases["Fase_" + str(Numero_fase)]["Angulo_inicial"]
+                    self.velocidade = cenario.Fases["Fase_" + str(Numero_fase)]["Velocidade_inicial"] 
+                    self.movimenta = True
+    
+            else:
+                screen.blit(Proximo[1], (Proximo[0][0], Proximo[0][1]))
+
+        else:
+            Transparencia 
+            Print_fimdejogo = Fonte.render("FIM DE JOGO", 1, (115, 115, 115))
+            Print_nometempo = Fonte.render("Tempo total: ", 1, (115, 115, 115))
+            Print_nomedano = Fonte.render("Dano total: ", 1, (115, 115, 115))
+            Print_nomepontuacao = Fonte.render("Pontuacao total: ", 1, (115, 115, 115))
+
+            Print_tempo = Fonte.render("%.2f" %(self.Total_tempo), 1, (115, 115, 115))
+            Print_dano = Fonte.render(str(self.Total_dano), 1, (115, 115, 115))
+            Print_pontuacao = Fonte.render(str(self.Total_pontos - self.Pontuacao_fase), 1, (115, 115, 115))
+            
+            screen.blit(Print_fimdejogo, (280, 170))
+
+            screen.blit(Print_tempo, (440, 250))
+            screen.blit(Print_dano, (410, 300))
+            screen.blit(Print_pontuacao, (500, 350))
+
+            screen.blit(Print_nometempo, (200, 250))
+            screen.blit(Print_nomedano, (200, 300))
+            screen.blit(Print_nomepontuacao, (200, 350))
+
+            self.virtual_x, self.virtual_y =  9000, 9000
+            if Rect(Proximo[0]).collidepoint(pygame.mouse.get_pos()):
+                
+                screen.blit(Proximo[2], (Proximo[0][0], Proximo[0][1]))
+                if pygame.mouse.get_pressed()[0]:
+                    Numero_fase = 1
+                    return False 
+            else:
+                screen.blit(Proximo[1], (Proximo[0][0], Proximo[0][1]))
+
+        return True 
+
+
+
+class Jogo: 
+    global Numero_fase
+    def Iniciar(self,Tela_menu, Tela_jogo, Tela_cheia_on):
+        Tamanho_tela_x = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][0]
+        Tamanho_tela_y = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][1]
+
+        carro = Carro() 
+        pygame.init()
+        
+        if Tela_cheia_on:
+            
+            screen= pygame.display.set_mode((Tamanho_tela_x, Tamanho_tela_y), FULLSCREEN|HWSURFACE|DOUBLEBUF)
+        else:
+            screen= pygame.display.set_mode((Tamanho_tela_x, Tamanho_tela_y), HWSURFACE|DOUBLEBUF)
+
+     
+     
+        clock = pygame.time.Clock()
+        
+        while True:
+            Tamanho_mapa_x = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_mapa"][0]
+            Tamanho_mapa_y = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_mapa"][1]
+            Tamanho_tela_x = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][0]
+            Tamanho_tela_y = cenario.Fases["Fase_" + str(Numero_fase)]["Tamanho_tela"][1]
+
+
+            clock.tick_busy_loop(60)
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    sys.exit()
+                             
+                if event.type == KEYDOWN:
+                        if event.key == K_ESCAPE:
+                                Tela_menu = True
+                                Tela_jogo = False
+                                return Tela_menu, Tela_jogo
+                pygame.event.clear()
+            camera = Camera(0, 0, Tamanho_mapa_x - Tamanho_tela_x, Tamanho_mapa_y - Tamanho_tela_y)
+            pygame.display.set_caption(str(clock.get_fps()))
+            background = cenario.Fases["Fase_" + str(Numero_fase)]["Imagem_fase"].convert()
+            pygame.event.pump()
+            key = list(pygame.key.get_pressed())
+            carro.Movimentacao(key)
+            camera.center_on(carro.virtual_x, carro.virtual_y)
+            screen.blit(background, (-camera.x, -camera.y))
+            Tela_menu, Tela_jogo = carro.draw(screen, camera)
+            carro.Botoes_jogo(screen, camera)
+            pygame.display.flip()
+
+            if Tela_menu:
+                return Tela_menu, Tela_jogo
+
+            screen.fill(0)
+            clock.tick(60)
+
+#Jogo = Jogo()
+#Jogo.Iniciar(False, True, False)
